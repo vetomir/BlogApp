@@ -6,18 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Entity
-@Setter
-@Getter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class Role {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotBlank
     private String name;
 
     @JsonBackReference
@@ -27,5 +25,4 @@ public class Role {
     public Role(String name) {
         this.name = name;
     }
-
 }

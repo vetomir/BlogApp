@@ -6,13 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
+public
 class UserService {
 
     private UserRepository userRepository;
@@ -27,20 +27,24 @@ class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<User> showAllUsers(Pageable pageable){
-        return userRepository.findAll(pageable);
+    public List<User> showAllUsers(){
+        return userRepository.findAll();
+    }
+
+    public List<Role> showAllRoles(){
+        return roleRepository.findAll();
     }
 
     public User addUser(User toAdd, String role){
-        logger.info("Exposing all the Users");
+        logger.info("add new User");
 
         toAdd.setPassword(passwordEncoder.encode(toAdd.getPassword()));
         List<Role> roleArray = new ArrayList<>();
-        Optional<Role> role1 = roleRepository.findByName("ROLE_USER");
+        Optional<Role> role1 = roleRepository.findByName("USER");
         roleArray.add(role1.get());
 
-        if(!role.isEmpty()){
-            Optional<Role> role2 = roleRepository.findByName("ROLE_" + role.toUpperCase());
+        if(!role.isBlank()){
+            Optional<Role> role2 = roleRepository.findByName(role.toUpperCase());
 
             role2.ifPresent(roleArray::add);
         }
@@ -63,18 +67,17 @@ class UserService {
         return userRepository.findById(id).get();
     }
 
-    public User createRole(String role, Long id){
+    public Role createRole(String role){
         role = "ROLE_" + role.toUpperCase();
         Optional<Role> existsRole = roleRepository.findByName(role);
-        User user = userRepository.findById(id).get();
         if(existsRole.isPresent()){
-            existsRole.get().getUsers().add(user);
+            return existsRole.get();
         }
         else {
             Role newRole = new Role(role);
-            user.getRoles().add(newRole);
+            return roleRepository.save(newRole);
         }
-        return user;
+
     }
     public boolean deleteRole(String role){
         role = "ROLE_" + role.toUpperCase();
@@ -87,7 +90,7 @@ class UserService {
         return result.get();
     }
 
-    public boolean deleteAppUser(Long id){
+    public boolean deleteApp(Long id){
         if(userRepository.existsById(id)){
             userRepository.deleteById(id);
             logger.info("User with id: " + id +". Deleted!");

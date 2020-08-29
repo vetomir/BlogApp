@@ -45,5 +45,16 @@ class Post extends Audit {
         this.imageUrl = toUpdate.imageUrl;
     }
 
-
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", published=" + published +
+                ", text='" + text + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", category=" + category +
+                ", user=" + user +
+                '}';
+    }
 }

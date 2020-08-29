@@ -1,31 +1,27 @@
 package pl.gregorymartin.blogapp.user;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pl.gregorymartin.blogapp.post.Post;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
+@Setter @Getter @NoArgsConstructor
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     private String name;
@@ -36,12 +32,8 @@ public class User implements UserDetails {
     @NotBlank
     @Email
     private String email;
-    private String azurePersonId;
-    private boolean isEnabled;
 
-    @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private Set<Post> posts;
+    private boolean isEnabled;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -50,19 +42,31 @@ public class User implements UserDetails {
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
+    Collection<Role> roles;
 
-    public User(String name, String username, String password, String email) {
+
+
+    public User(final String name, final String username, final String password, final String email) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.email = email;
+        roles = new ArrayList<>();
+    }
+    public void newRole(Role newRole){
+        this.roles.add(newRole);
+    }
+
+    public void toUpdate(User toUpdate){
+        this.name = toUpdate.name;
+        this.username = toUpdate.username;
+        this.email = toUpdate.email;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        roles.forEach(x -> authorities.add(new SimpleGrantedAuthority(x.getName())));
+        roles.forEach(x -> authorities.add(new SimpleGrantedAuthority("ROLE_" + x.getName().toUpperCase())));
         return authorities;
     }
 
@@ -71,10 +75,9 @@ public class User implements UserDetails {
         return isEnabled;
     }
 
-    public void setEnabled(final boolean enabled) {
-        isEnabled = enabled;
+    public void toggleEnable() {
+        isEnabled = !isEnabled;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -90,10 +93,5 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void toUpdate(final User toUpdate) {
-        this.name = toUpdate.name;
-        this.username = toUpdate.username;
-        this.password = toUpdate.password;
-        this.email = toUpdate.email;
-    }
+
 }

@@ -20,10 +20,20 @@ class Category {
     private String name;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "post")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "category")
     private Set<Post> posts;
 
     public Category(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", posts=" + posts +
+                '}';
+    }
+
 }

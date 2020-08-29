@@ -40,19 +40,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
+        http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/camera").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/signup").permitAll()
-                .and()
-                .logout()
-                .and()
-                .formLogin().permitAll()
-                .and()
-                .rememberMe().tokenValiditySeconds(200000)
-                .rememberMeCookieName("rajeh")
-                .rememberMeParameter("remember");
-                /*to SSL'a
-                 .key("bombaj").useSecureCookie(true);*/
+                .anyRequest().permitAll();
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/blog")
 class BlogApi {
     private PostService postService;
 
@@ -22,32 +23,10 @@ class BlogApi {
         this.postService = postService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     ResponseEntity<List<Post>> readAllPosts(Pageable page) {
         logger.warn("Exposing all the POSTS!");
-        return ResponseEntity.ok(postService.showAllPosts(page));
-    }
-    @GetMapping
-    ResponseEntity<List<Post>> readAllPostsByCategory(
-            @RequestHeader String category
-    ) {
-        logger.warn("Exposing all the POSTS with name: " + category);
-        return ResponseEntity.ok(postService.showAllPostsByCategory(category));
-    }
-    @GetMapping
-    ResponseEntity<List<Post>> readAllPostsByUser(
-            @RequestHeader String nameOfUser
-    ) {
-        logger.warn("Exposing all the POSTS with NAME of USER: " + nameOfUser);
-        return ResponseEntity.ok(postService.showAllPostsByUser(nameOfUser));
-    }
-    @GetMapping
-    ResponseEntity<List<Post>> readAllPostsByNameOfUserAndCategory(
-            @RequestHeader String nameOfUser,
-            @RequestHeader String nameOfCategory
-    ) {
-        logger.warn("Exposing all the POSTS with NAME of USER: " + nameOfUser + " and CATEGORY " + nameOfCategory);
-        return ResponseEntity.ok(postService.showAllPostsByUserAndCategory(nameOfUser, nameOfCategory));
+        return ResponseEntity.ok(postService.showAllPosts());
     }
     @PostMapping
     ResponseEntity<Post> createPost(
