@@ -25,40 +25,40 @@ public class UserApi {
     }
 
 
-    @GetMapping("/all")
+    @GetMapping
     ResponseEntity<List<User>> readAllUsers() {
         logger.warn("Exposing all the people!");
         return ResponseEntity.ok(userService.showAllUsers());
     }
 
-    @GetMapping("/roles")
+    @GetMapping("/role")
     ResponseEntity<List<Role>> readAllRoles() {
         logger.warn("Exposing all the people!");
         return ResponseEntity.ok(userService.showAllRoles());
     }
 
-    @PostMapping("/add")
+    @PostMapping
     ResponseEntity<User> createAppUser(@RequestBody @Valid User toCreate, @RequestHeader(defaultValue = "") String role) {
         User result = userService.addUser(toCreate, role);
         return ResponseEntity.created(URI.create("/" + result.getId())).body(result);
     }
 
 
-    @PostMapping("/role/{role}")
-    ResponseEntity<?> createRole(@PathVariable String role) {
+    @PostMapping("/role")
+    ResponseEntity<?> createRole(@RequestHeader String role) {
         userService.createRole(role);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<?> updateUser(@PathVariable long id, @RequestBody User toUpdate) {
+    @PutMapping
+    ResponseEntity<?> updateUser(@RequestParam long id, @RequestBody User toUpdate) {
         userService.updateUser(id,toUpdate);
         return ResponseEntity.noContent().build();
     }
 
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteUser(@PathVariable long id) {
+    @DeleteMapping
+    ResponseEntity<?> deleteUser(@RequestParam long id) {
         boolean result = userService.deleteApp(id);
         if(result){
             return ResponseEntity.noContent().build();

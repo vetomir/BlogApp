@@ -3,6 +3,7 @@ package pl.gregorymartin.blogapp;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -42,7 +43,16 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .anyRequest().permitAll();
+                .antMatchers(HttpMethod.DELETE,"/user").hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.POST,"/user").authenticated()
+                .antMatchers("/user/role").authenticated()
+                .antMatchers(HttpMethod.PATCH,"/user").authenticated()
+                .antMatchers(HttpMethod.GET,"/user").permitAll()
+                .antMatchers(HttpMethod.GET,"/").permitAll()
+                .and()
+                .formLogin()
+                .and()
+                .logout().logoutSuccessUrl("/");
     }
 
     @Override

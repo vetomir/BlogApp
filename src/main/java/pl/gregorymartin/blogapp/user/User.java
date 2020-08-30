@@ -35,7 +35,8 @@ public class User implements UserDetails {
 
     private boolean isEnabled;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER
+    )
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
@@ -66,7 +67,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        roles.forEach(x -> authorities.add(new SimpleGrantedAuthority("ROLE_" + x.getName().toUpperCase())));
+        roles.forEach(x -> authorities.add(new SimpleGrantedAuthority("ROLE_" + x.getName())));
         return authorities;
     }
 

@@ -68,13 +68,12 @@ class UserService {
     }
 
     public Role createRole(String role){
-        role = "ROLE_" + role.toUpperCase();
-        Optional<Role> existsRole = roleRepository.findByName(role);
+        Optional<Role> existsRole = roleRepository.findByName(role.toUpperCase());
         if(existsRole.isPresent()){
             return existsRole.get();
         }
         else {
-            Role newRole = new Role(role);
+            Role newRole = new Role(role.toUpperCase());
             return roleRepository.save(newRole);
         }
 
